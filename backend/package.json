@@ -1,0 +1,23 @@
+{
+  "name": "techno-api",
+  "version": "1.0.0",
+  "description": "API used by Antonio in the land of Techno",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "author": "Antonio Cosentino",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.0",
+    "express": "^4.16.2",
+    "mongodb": "^2.2.16",
+    "request": "^2.83.0",
+    "spotify-web-api-node": "^2.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.15.0"
+  }
+}
