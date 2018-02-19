@@ -8,9 +8,9 @@ const Request        = require('request');
 require('dotenv').config();
 
 app.use(cors())
-const port = 1811;
-app.listen(port, () => {
-  console.log('We are live on ' + port);
+
+app.listen(process.env.REACT_APP_PORT, () => {
+  console.log('We are live on ' + process.env.REACT_APP_PORT);
 });
 
 app.get( '/', function ( req, res ) {
