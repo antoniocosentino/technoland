@@ -49,3 +49,23 @@ a.viewGit {
   color: #000;
   font-size: 11px;
 }
+
+
+@media only screen and (max-width: 768px) {
+  a.viewGit {
+    font-size: 13px;
+    position: relative;
+    left: initial;
+    bottom: initial;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .technoContainer img {
+    width: 100%;
+  }
+
+
+}
