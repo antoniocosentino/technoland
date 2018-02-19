@@ -5,6 +5,8 @@ The app tells you if I'm currently listening to Techno or not :)
 
 [Live Demo](https://antoniocosentino.github.io/technoland/)
 
+---
+
 ![App Screenshot](https://github.com/antoniocosentino/technoland/blob/master/frontend/src/img/screenshot.png)
 
 # To-do
