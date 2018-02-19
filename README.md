@@ -1,7 +1,7 @@
 ## Antonio in the land of Techno 🔈
 
 This is an experiment with React and Spotify Web Api.
-The app tells you if I'm currently listening to Techno or not :)
+The app uses Spotify's API to retrieve in real-time my playing track and music genre.
 
 [Live Demo](https://antoniocosentino.github.io/technoland/)
 
