@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-require('dotenv').config()
 const SpotifyWebApi = require('spotify-web-api-node');
 const request = require('request');
 
@@ -89,7 +88,7 @@ class Techno extends React.Component {
     };
 
     componentDidMount() {
-        request('http://localhost:1811/token', (error, response, body) => {
+        request(process.env.REACT_APP_API_URL, (error, response, body) => {
             if (error) {
                 console.log('error:', error);
             }
