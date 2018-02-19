@@ -71,6 +71,14 @@ class NotListening extends React.Component {
     }
 }
 
+class ViewGitHub extends React.Component {
+    render() {
+        return (
+            <a className="viewGit" href="https://github.com/antoniocosentino/technoland">View on Github</a>
+        );
+    }
+}
+
 class Techno extends React.Component {
 
     constructor(){
@@ -108,7 +116,7 @@ class Techno extends React.Component {
                     if (data.body.item){
                         spotifyApi.searchArtists(data.body.item.artists[0].name)
                         .then((artistData) => {
-                            const needle = [ 'techno', 'electro house' ];
+                            const needle = [ 'techno', 'electro house', 'destroy techno', 'new rave' ];
                             const genreFilter =  needle.some(function (v) {
                                 return artistData.body.artists.items[0].genres.indexOf(v) >= 0;
                             });
@@ -116,6 +124,7 @@ class Techno extends React.Component {
                                 this.setState( { isTechno: true } );
                             }
                             else {
+                                // console.log(artistData.body.artists.items[0].genres);
                                 this.setState( { isTechno: false } );
                             }
                         }, function(err) {
@@ -124,6 +133,7 @@ class Techno extends React.Component {
                         this.setState( { albumImg: data.body.item.album.images[0].url } );
                         this.setState( { artist: data.body.item.artists[0].name } );
                         this.setState( { title: data.body.item.name } );
+                        document.title = `${data.body.item.artists[0].name} - ${data.body.item.name}`;
                         this.setState( { loading: false } );
                         if (data.body.is_playing) {
                             this.setState( { isPlaying: true } );
@@ -137,6 +147,7 @@ class Techno extends React.Component {
                         else {
                             this.setState( { isPlaying: false } );
                             this.setState( { yesNo: 'NO' } );
+                            document.title = "Is Antonio in the land of Techno?";
                         }
                     }
                 },
@@ -149,27 +160,30 @@ class Techno extends React.Component {
 
     render() {
         return (
-          <div className="technoContainer">
-            <AppTitle />
-            { this.state.loading &&
-                <Loading />
-            }
-            { !this.state.loading &&
-                <div className="albumWrapper">
-                    <YesNo answer={ this.state.yesNo } />
-                    { this.state.isPlaying &&
-                        <div>
-                            <AlbumCover albumImg={ this.state.albumImg } />
-                            <Eq />
-                            <SongInfo artist={ this.state.artist } title={ this.state.title } />
-                        </div>
-                    }
-                    { !this.state.isPlaying &&
-                        <NotListening />
-                    }
+            <div>
+                <div className="technoContainer">
+                <AppTitle />
+                { this.state.loading &&
+                    <Loading />
+                }
+                { !this.state.loading &&
+                    <div className="albumWrapper">
+                        <YesNo answer={ this.state.yesNo } />
+                        { this.state.isPlaying &&
+                            <div>
+                                <AlbumCover albumImg={ this.state.albumImg } />
+                                <Eq />
+                                <SongInfo artist={ this.state.artist } title={ this.state.title } />
+                            </div>
+                        }
+                        { !this.state.isPlaying &&
+                            <NotListening />
+                        }
+                    </div>
+                }
                 </div>
-            }
-          </div>
+                <ViewGitHub />
+            </div>
         );
     }
 }
