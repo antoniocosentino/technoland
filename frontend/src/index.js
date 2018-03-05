@@ -89,77 +89,78 @@ class Techno extends React.Component {
             accessToken : null,
             artist      : null,
             title       : null,
-            yesNo       : 'NO',
+            yesNo       : '',
             isPlaying   : false,
-            isTechno    : false
         };
 
-        this.accessToken = "";
+        this.accessToken = '';
+        this.isTechno = false;
         this.fetchInfo = this.fetchInfo.bind(this);
-
     };
 
     fetchInfo(loading) {
-        var isTechno = false;
-
-            spotifyApi.setAccessToken(this.accessToken);
-            spotifyApi.getMyCurrentPlayingTrack()
-            .then(data => {
-                if (data.body.item){
-                    spotifyApi.searchArtists(data.body.item.artists[0].name)
-                    .then((artistData) => {
-                        const needle = [ 'techno', 'electro house', 'destroy techno', 'new rave' ];
-                        const genreFilter =  needle.some(function (v) {
-                            return artistData.body.artists.items[0].genres.indexOf(v) >= 0;
-                        });
-
-                        if (genreFilter){
-                            isTechno = true;
-                        }
-                        else {
-                            // console.log(artistData.body.artists.items[0].genres);
-                            isTechno = false;
-                        }
-                    }, function(err) {
-                        console.error(err);
+        spotifyApi.setAccessToken(this.accessToken);
+        spotifyApi.getMyCurrentPlayingTrack()
+        .then(data => {
+            if (data.body.item){
+                spotifyApi.searchArtists(data.body.item.artists[0].name)
+                .then((artistData) => {
+                    const needle = [ 'techno', 'electro house', 'destroy techno'];
+                    const genreFilter =  needle.some(function (v) {
+                        return artistData.body.artists.items[0].genres.indexOf(v) >= 0;
                     });
 
-                    var isPlaying = false;
+                    console.log(artistData.body.artists.items[0].genres);
+                    console.log('genreFilter', genreFilter);
 
-                    if (data.body.is_playing) {
-                        isPlaying = true;
-                        var yesNo = "NO";
-                        if (isTechno){
-                            yesNo = "YES";
-                        }
-                        else {
-                            yesNo = "NO";
-                        }
+                    if (genreFilter){
+                        this.isTechno = true;
+                        console.log('setting istechno to true');
                     }
                     else {
-                        isPlaying = false;
-                        yesNo = "NO";
-                        document.title = "Is Antonio in the land of Techno?";
+                        this.isTechno = false;
+                        console.log('setting istechno to false');
                     }
+                }, function(err) {
+                    console.error(err);
+                });
 
-                    this.setState( {
-                        albumImg  : data.body.item.album.images[0].url,
-                        artist    : data.body.item.artists[0].name,
-                        title     : data.body.item.name,
-                        loading   : false,
-                        isTechno  : isTechno,
-                        isPlaying : isPlaying,
-                        yesNo     : yesNo
-                    } );
+                var isPlaying = false;
 
-                    document.title = `${data.body.item.artists[0].name} - ${data.body.item.name}`;
+                if (data.body.is_playing) {
+                    isPlaying = true;
+                    console.log('is techno is', this.isTechno);
+
+                    if (this.isTechno){
+                        console.log('setting yesno to yes');
+                        this.setState( { yesNo : 'YES' } );
+                    }
+                    else {
+                        console.log('setting yesno to no');
+                        this.setState( { yesNo : 'NO' } );
+                    }
                 }
-            },
-            function(err) {
-                console.error(err);
-            });
+                else {
+                    isPlaying = false;
+                    document.title = "Is Antonio in the land of Techno?";
+                }
 
+                this.setState( {
+                    albumImg  : data.body.item.album.images[0].url,
+                    artist    : data.body.item.artists[0].name,
+                    title     : data.body.item.name,
+                    loading   : false,
+                    isPlaying : isPlaying,
+                } );
 
+                document.title = `${data.body.item.artists[0].name} - ${data.body.item.name}`;
+            }
+        },
+        function(err) {
+            console.error(err);
+        });
+
+        setTimeout(this.fetchInfo, 10000);
     }
 
     componentDidMount() {
@@ -171,7 +172,6 @@ class Techno extends React.Component {
                 const responseObj = JSON.parse(body);
                 this.accessToken = responseObj.access_token;
                 this.fetchInfo();
-                this.interval = setInterval(this.fetchInfo, 10000);
             }
         });
     }
