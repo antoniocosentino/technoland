@@ -89,73 +89,96 @@ class Techno extends React.Component {
             accessToken : null,
             artist      : null,
             title       : null,
-            yesNo       : 'NO',
+            yesNo       : '',
             isPlaying   : false,
-            isTechno    : false
         };
+
+        this.accessToken = '';
+        this.fetchInfo = this.fetchInfo.bind(this);
     };
 
-    componentDidMount() {
-        request(process.env.REACT_APP_API_URL, (error, response, body) => {
-            if (error) {
-                console.log('error:', error);
-            }
-            else {
-                const responseObj = JSON.parse(body);
-                this.setState( { accessToken: responseObj.access_token } );
-            }
+    getToken(){
+        return new Promise(function(resolve, reject) {
+            request(process.env.REACT_APP_API_URL, (error, response, body) => {
+                if (error) {
+                    reject('error');
+                }
+                else {
+                    resolve(JSON.parse(body));
+                }
+            });
         });
     }
 
-    componentDidUpdate() {
-        if (this.state.loading){
-            setInterval(() => {
-                spotifyApi.setAccessToken(this.state.accessToken);
-                spotifyApi.getMyCurrentPlayingTrack()
-                .then(data => {
-                    if (data.body.item){
-                        spotifyApi.searchArtists(data.body.item.artists[0].name)
-                        .then((artistData) => {
-                            const needle = [ 'techno', 'electro house', 'destroy techno', 'new rave' ];
-                            const genreFilter =  needle.some(function (v) {
-                                return artistData.body.artists.items[0].genres.indexOf(v) >= 0;
-                            });
-                            if (genreFilter){
-                                this.setState( { isTechno: true } );
-                            }
-                            else {
-                                // console.log(artistData.body.artists.items[0].genres);
-                                this.setState( { isTechno: false } );
-                            }
-                        }, function(err) {
-                            console.error(err);
-                        });
-                        this.setState( { albumImg: data.body.item.album.images[0].url } );
-                        this.setState( { artist: data.body.item.artists[0].name } );
-                        this.setState( { title: data.body.item.name } );
-                        document.title = `${data.body.item.artists[0].name} - ${data.body.item.name}`;
-                        this.setState( { loading: false } );
-                        if (data.body.is_playing) {
-                            this.setState( { isPlaying: true } );
-                            if (this.state.isTechno){
-                                this.setState( { yesNo: 'YES' } );
-                            }
-                            else {
-                                this.setState( { yesNo: 'NO' } );
-                            }
-                        }
-                        else {
-                            this.setState( { isPlaying: false } );
-                            this.setState( { yesNo: 'NO' } );
-                            document.title = "Is Antonio in the land of Techno?";
-                        }
-                    }
-                },
-                function(err) {
-                    console.error(err);
+    getPlayingInfo() {
+        return new Promise((resolve, reject) => {
+            spotifyApi.setAccessToken(this.accessToken);
+            spotifyApi.getMyCurrentPlayingTrack()
+            .then(data => {
+                resolve(data);
+            },
+            function(err) {
+                reject(err);
+            });
+        });
+    }
+
+    getArtistInfo(artist) {
+        return new Promise((resolve, reject) => {
+            spotifyApi.setAccessToken(this.accessToken);
+            spotifyApi.searchArtists(artist)
+            .then((artistData) => {
+                resolve(artistData);
+            }, function(err) {
+                reject(err);
+            });
+        });
+    }
+
+    fetchInfo() {
+        this.getPlayingInfo().then((playingInfo) => {
+            this.getArtistInfo(playingInfo.body.item.artists[0].name).then((artistData) => {
+
+                const needle = [ 'techno', 'electro house', 'destroy techno'];
+                const genreFilter =  needle.some(function (v) {
+                    return artistData.body.artists.items[0].genres.indexOf(v) >= 0;
                 });
-            }, 10000);
-        }
+
+                var yesNo = '';
+
+                if (playingInfo.body.is_playing && genreFilter){
+                    yesNo = 'YES';
+                }
+                else {
+                    yesNo = 'NO';
+                }
+
+                if (playingInfo.body.is_playing) {
+                    document.title = `${playingInfo.body.item.artists[0].name} - ${playingInfo.body.item.name}`;
+                }
+                else {
+                    document.title = 'Is Antonio in the land of Techno?';
+                }
+
+                this.setState( {
+                    albumImg  : playingInfo.body.item.album.images[0].url,
+                    artist    : playingInfo.body.item.artists[0].name,
+                    title     : playingInfo.body.item.name,
+                    loading   : false,
+                    isPlaying : playingInfo.body.is_playing,
+                    yesNo     : yesNo
+                } );
+
+            });
+        });
+        setTimeout(this.fetchInfo, 10000);
+    }
+
+    componentDidMount() {
+        this.getToken().then((responseObj) => {
+            this.accessToken = responseObj.access_token;
+            this.fetchInfo();
+        });
     }
 
     render() {
