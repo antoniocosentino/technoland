@@ -51,6 +51,14 @@ class AlbumCover extends React.Component {
     }
 }
 
+class GenreTag extends React.Component {
+    render() {
+        return (
+          <span className="tag" key={ this.props.tag }>{ this.props.tag }</span>
+        );
+    }
+}
+
 class SongInfo extends React.Component {
     render() {
         return (
@@ -86,11 +94,11 @@ class Techno extends React.Component {
         this.state = {
             albumImg    : null,
             loading     : true,
-            accessToken : null,
             artist      : null,
             title       : null,
             yesNo       : '',
             isPlaying   : false,
+            tags        : []
         };
 
         this.accessToken = '';
@@ -166,7 +174,8 @@ class Techno extends React.Component {
                     title     : playingInfo.body.item.name,
                     loading   : false,
                     isPlaying : playingInfo.body.is_playing,
-                    yesNo     : yesNo
+                    yesNo     : yesNo,
+                    tags      : artistData.body.artists.items[0].genres
                 } );
 
             });
@@ -197,6 +206,9 @@ class Techno extends React.Component {
                                 <AlbumCover albumImg={ this.state.albumImg } />
                                 <Eq />
                                 <SongInfo artist={ this.state.artist } title={ this.state.title } />
+                                {this.state.tags.map(tag => (
+                                    <GenreTag key={ tag } tag={ tag } />
+                                ))}
                             </div>
                         }
                         { !this.state.isPlaying &&
