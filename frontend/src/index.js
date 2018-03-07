@@ -106,10 +106,14 @@ class Techno extends React.Component {
     };
 
     getToken(){
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
             request(process.env.REACT_APP_API_URL, (error, response, body) => {
                 if (error) {
-                    reject('error');
+                    this.setState( {
+                        isPlaying : false,
+                        yesNo     : 'NO',
+                        loading   : false
+                    } );
                 }
                 else {
                     resolve(JSON.parse(body));
@@ -125,8 +129,12 @@ class Techno extends React.Component {
             .then(data => {
                 resolve(data);
             },
-            function(err) {
-                reject(err);
+            (err) => {
+                this.setState( {
+                    isPlaying : false,
+                    yesNo     : 'NO',
+                    loading   : false
+                } );
             });
         });
     }
@@ -137,8 +145,13 @@ class Techno extends React.Component {
             spotifyApi.searchArtists(artist)
             .then((artistData) => {
                 resolve(artistData);
-            }, function(err) {
-                reject(err);
+            },
+            (err) => {
+                this.setState( {
+                    isPlaying : false,
+                    yesNo     : 'NO',
+                    loading   : false
+                } );
             });
         });
     }
