@@ -7,7 +7,7 @@ The app uses Spotify's API to retrieve in real-time my playing track and music g
 
 ---
 
-![App Screenshot](https://github.com/antoniocosentino/technoland/blob/master/frontend/src/img/screenshot.png)
+
 
 # To-do
 - Create an authentication process so it can be used even with other Spotify accounts
