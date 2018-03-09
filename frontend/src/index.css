@@ -61,6 +61,13 @@ a.viewGit {
   bottom: 16px;
   color: #000;
   font-size: 13px;
+  text-decoration: none;
+}
+
+a.viewGit i {
+  font-size: 18px;
+  position: relative;
+  top: 1px;
 }
 
 

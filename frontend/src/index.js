@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'font-awesome/css/font-awesome.min.css';
 import './index.css';
 const SpotifyWebApi = require('spotify-web-api-node');
 const request = require('request');
@@ -82,7 +83,7 @@ class NotListening extends React.Component {
 class ViewGitHub extends React.Component {
     render() {
         return (
-            <a className="viewGit" href="https://github.com/antoniocosentino/technoland">View on Github</a>
+            <a className="viewGit" href="https://github.com/antoniocosentino/technoland"><i className="fa fa-github"></i> View on Github</a>
         );
     }
 }
