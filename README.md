@@ -11,5 +11,3 @@ The app uses Spotify's API to retrieve in real-time my playing track and music g
 
 # To-do
 - Create an authentication process so it can be used even with other Spotify accounts
-- Improve the mobile layout
-- Improve calls timing
