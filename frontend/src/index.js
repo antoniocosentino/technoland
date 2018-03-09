@@ -62,7 +62,7 @@ class GenreTag extends React.Component {
 class SongInfo extends React.Component {
     render() {
         return (
-            <div>
+            <div className="songInfo">
                 <span className="songArtist">{ this.props.artist }</span>
                  &nbsp;-&nbsp;
                 <span className="songTitle">{ this.props.title }</span>
@@ -160,7 +160,7 @@ class Techno extends React.Component {
         this.getPlayingInfo().then((playingInfo) => {
             this.getArtistInfo(playingInfo.body.item.artists[0].name).then((artistData) => {
 
-                const needle = [ 'techno', 'electro house', 'destroy techno'];
+                const needle = [ 'techno', 'electro house', 'destroy techno', 'german techno', 'minimal techno'];
                 const genreFilter =  needle.some(function (v) {
                     return artistData.body.artists.items[0].genres.indexOf(v) >= 0;
                 });

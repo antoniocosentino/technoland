@@ -38,6 +38,10 @@ body {
   height: auto;
 }
 
+.technoContainer .songInfo {
+  margin-bottom: 10px;
+}
+
 .technoContainer span.songArtist {
   font-weight: bold;
 }
@@ -48,7 +52,7 @@ body {
   color: #fff;
   font-size: 11px;
   padding: 2px 6px;
-  margin: 10px 3px;
+  margin: 3px;
 }
 
 a.viewGit {
