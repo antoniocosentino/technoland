@@ -110,11 +110,7 @@ class Techno extends React.Component {
         return new Promise((resolve, reject) => {
             request(process.env.REACT_APP_API_URL, (error, response, body) => {
                 if (error) {
-                    this.setState( {
-                        isPlaying : false,
-                        yesNo     : 'NO',
-                        loading   : false
-                    } );
+                    this.triggerError();
                 }
                 else {
                     resolve(JSON.parse(body));
