@@ -131,11 +131,7 @@ class Techno extends React.Component {
                 resolve(data);
             },
             (err) => {
-                this.setState( {
-                    isPlaying : false,
-                    yesNo     : 'NO',
-                    loading   : false
-                } );
+                this.triggerError();
             });
         });
     }
@@ -148,51 +144,60 @@ class Techno extends React.Component {
                 resolve(artistData);
             },
             (err) => {
-                this.setState( {
-                    isPlaying : false,
-                    yesNo     : 'NO',
-                    loading   : false
-                } );
+                this.triggerError();
             });
         });
     }
 
+    triggerError() {
+        this.setState( {
+            isPlaying : false,
+            yesNo     : 'NO',
+            loading   : false
+        } );
+    }
+
     fetchInfo() {
         this.getPlayingInfo().then((playingInfo) => {
-            this.getArtistInfo(playingInfo.body.item.artists[0].name).then((artistData) => {
+            if (playingInfo.body) {
+                this.getArtistInfo(playingInfo.body.item.artists[0].name).then((artistData) => {
 
-                const needle = [ 'techno', 'electro house', 'destroy techno', 'german techno', 'minimal techno'];
-                const genreFilter =  needle.some(function (v) {
-                    return artistData.body.artists.items[0].genres.indexOf(v) >= 0;
+                    const needle = [ 'techno', 'electro house', 'destroy techno', 'german techno', 'minimal techno'];
+                    const genreFilter =  needle.some(function (v) {
+                        return artistData.body.artists.items[0].genres.indexOf(v) >= 0;
+                    });
+
+                    var yesNo = '';
+
+                    if (playingInfo.body.is_playing && genreFilter){
+                        yesNo = 'YES';
+                    }
+                    else {
+                        yesNo = 'NO';
+                    }
+
+                    if (playingInfo.body.is_playing) {
+                        document.title = `${playingInfo.body.item.artists[0].name} - ${playingInfo.body.item.name}`;
+                    }
+                    else {
+                        document.title = 'Is Antonio in the land of Techno?';
+                    }
+
+                    this.setState( {
+                        albumImg  : playingInfo.body.item.album.images[0].url,
+                        artist    : playingInfo.body.item.artists[0].name,
+                        title     : playingInfo.body.item.name,
+                        loading   : false,
+                        isPlaying : playingInfo.body.is_playing,
+                        yesNo     : yesNo,
+                        tags      : artistData.body.artists.items[0].genres
+                    } );
+
                 });
-
-                var yesNo = '';
-
-                if (playingInfo.body.is_playing && genreFilter){
-                    yesNo = 'YES';
-                }
-                else {
-                    yesNo = 'NO';
-                }
-
-                if (playingInfo.body.is_playing) {
-                    document.title = `${playingInfo.body.item.artists[0].name} - ${playingInfo.body.item.name}`;
-                }
-                else {
-                    document.title = 'Is Antonio in the land of Techno?';
-                }
-
-                this.setState( {
-                    albumImg  : playingInfo.body.item.album.images[0].url,
-                    artist    : playingInfo.body.item.artists[0].name,
-                    title     : playingInfo.body.item.name,
-                    loading   : false,
-                    isPlaying : playingInfo.body.is_playing,
-                    yesNo     : yesNo,
-                    tags      : artistData.body.artists.items[0].genres
-                } );
-
-            });
+            }
+            else {
+                this.triggerError();
+            }
         });
         setTimeout(this.fetchInfo, 10000);
     }
