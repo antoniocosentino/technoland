@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import 'font-awesome/css/font-awesome.min.css';
 import './index.css';
 const SpotifyWebApi = require('spotify-web-api-node');
-const request = require('request');
+const Request = require('request');
 
 const spotifyApi = new SpotifyWebApi({
     clientId : process.env.REACT_APP_SPOTIFY_CLIENT_ID,
@@ -88,6 +88,25 @@ class ViewGitHub extends React.Component {
     }
 }
 
+class AreYou extends React.Component {
+    render() {
+        return (
+            <div className="areYou">
+                <span>Are you in the land of techno?</span>
+                <a href={this.props.link} className="spotifyConnect">Connect with Spotify</a>
+            </div>
+        );
+    }
+}
+
+class Separator extends React.Component {
+    render() {
+        return (
+            <div className="separator"></div>
+        );
+    }
+}
+
 class Techno extends React.Component {
 
     constructor(){
@@ -104,11 +123,40 @@ class Techno extends React.Component {
 
         this.accessToken = '';
         this.fetchInfo = this.fetchInfo.bind(this);
+        this.connectLink = '';
     };
+
+    generateConnectLink(){
+        var scopes = ['user-read-currently-playing', 'user-read-private'],
+        redirectUri = 'http://localhost:3000',
+        clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID,
+        state = 'get-token';
+
+        var spotifyApiConnect = new SpotifyWebApi({
+        redirectUri : redirectUri,
+        clientId : clientId
+        });
+
+        var authorizeURL = spotifyApiConnect.createAuthorizeURL(scopes, state);
+        return authorizeURL;
+    }
 
     getToken(){
         return new Promise((resolve, reject) => {
-            request(process.env.REACT_APP_API_URL, (error, response, body) => {
+            Request(process.env.REACT_APP_API_URL, (error, response, body) => {
+                if (error) {
+                    this.triggerError();
+                }
+                else {
+                    resolve(JSON.parse(body));
+                }
+            });
+        });
+    }
+
+    getUserToken(code){
+        return new Promise((resolve, reject) => {
+            Request(`${process.env.REACT_APP_PUBLIC_API_URL}?code=${code}`, (error, response, body) => {
                 if (error) {
                     this.triggerError();
                 }
@@ -199,10 +247,26 @@ class Techno extends React.Component {
     }
 
     componentDidMount() {
-        this.getToken().then((responseObj) => {
-            this.accessToken = responseObj.access_token;
-            this.fetchInfo();
-        });
+
+        var currentUrl = new URL(window.location);
+        var receivedCode = currentUrl.searchParams.get("code");
+
+        if (receivedCode) {
+            this.getUserToken(receivedCode).then((userToken) => {
+                console.log(userToken);
+                this.accessToken = userToken.access_token;
+                this.fetchInfo();
+            });
+        }
+        else {
+            this.getToken().then((responseObj) => {
+                this.accessToken = responseObj.access_token;
+                this.fetchInfo();
+            });
+        }
+
+        this.connectLink = this.generateConnectLink();
+
     }
 
     render() {
@@ -231,8 +295,11 @@ class Techno extends React.Component {
                         }
                     </div>
                 }
-                </div>
+                <Separator />
+                <AreYou link={this.connectLink} />
+                <Separator />
                 <ViewGitHub />
+                </div>
             </div>
         );
     }
