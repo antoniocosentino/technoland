@@ -125,6 +125,7 @@ class Techno extends React.Component {
         this.fetchInfo = this.fetchInfo.bind(this);
         this.connectLink = '';
         this.userName = 'Antonio';
+        this.isCustomUser = false;
     };
 
     generateConnectLink(){
@@ -271,6 +272,7 @@ class Techno extends React.Component {
                 window.history.replaceState(null, null, window.location.pathname);
                 this.getMyInfo().then((myInfo) => {
                     this.userName = myInfo.body.display_name;
+                    this.isCustomUser = true;
                     this.fetchInfo();
                 });
             });
@@ -312,8 +314,12 @@ class Techno extends React.Component {
                         }
                     </div>
                 }
-                <Separator />
-                <AreYou link={this.connectLink} />
+                { !this.isCustomUser &&
+                    <div>
+                        <Separator />
+                        <AreYou link={this.connectLink} />
+                    </div>
+                }
                 <Separator />
                 <ViewGitHub />
                 </div>
