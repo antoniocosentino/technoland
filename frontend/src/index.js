@@ -129,7 +129,7 @@ class Techno extends React.Component {
 
     generateConnectLink(){
         var scopes = ['user-read-currently-playing', 'user-read-private'],
-        redirectUri = 'http://localhost:3000',
+        redirectUri = process.env.REACT_APP_URL,
         clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID,
         state = 'get-token';
 
@@ -268,6 +268,7 @@ class Techno extends React.Component {
         if (receivedCode) {
             this.getUserToken(receivedCode).then((userToken) => {
                 this.accessToken = userToken.access_token;
+                window.history.replaceState(null, null, window.location.pathname);
                 this.getMyInfo().then((myInfo) => {
                     this.userName = myInfo.body.display_name;
                     this.fetchInfo();
