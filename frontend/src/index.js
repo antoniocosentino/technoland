@@ -270,7 +270,7 @@ class Techno extends React.Component {
     componentDidMount() {
 
         var currentUrl = new URL(window.location);
-        var receivedCode = currentUrl.searchParams.get("code");
+        var receivedCode = currentUrl.searchParams && currentUrl.searchParams.get("code");
 
         if (receivedCode) {
             window.history.replaceState(null, null, window.location.pathname);
