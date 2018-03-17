@@ -75,7 +75,7 @@ class SongInfo extends React.Component {
 class NotListening extends React.Component {
     render() {
         return (
-            <span>{this.props.userName} is not listening to music right now. Come back soon! :)</span>
+            <span>{this.props.userName} is not listening to music right now.</span>
         );
     }
 }
@@ -227,7 +227,7 @@ class Techno extends React.Component {
             if (playingInfo.body) {
                 this.getArtistInfo(playingInfo.body.item.artists[0].name).then((artistData) => {
 
-                    const needle = [ 'techno', 'electro house', 'destroy techno', 'german techno', 'minimal techno'];
+                    const needle = [ 'techno', 'electro house', 'destroy techno', 'german techno', 'tech house', 'minimal techno'];
                     const genreFilter =  needle.some(function (v) {
                         return artistData.body.artists.items[0].genres.indexOf(v) >= 0;
                     });
