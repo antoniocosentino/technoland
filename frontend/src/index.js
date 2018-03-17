@@ -13,7 +13,7 @@ const spotifyApi = new SpotifyWebApi({
 class AppTitle extends React.Component {
     render() {
         return (
-          <h1>Is Antonio in the land of Techno?</h1>
+          <h1>Is { this.props.userName } in the land of Techno?</h1>
         );
     }
 }
@@ -75,7 +75,7 @@ class SongInfo extends React.Component {
 class NotListening extends React.Component {
     render() {
         return (
-            <span>Antonio is not listening to music right now. Come back soon! :)</span>
+            <span>{this.props.userName} is not listening to music right now. Come back soon! :)</span>
         );
     }
 }
@@ -124,6 +124,7 @@ class Techno extends React.Component {
         this.accessToken = '';
         this.fetchInfo = this.fetchInfo.bind(this);
         this.connectLink = '';
+        this.userName = 'Antonio';
     };
 
     generateConnectLink(){
@@ -193,6 +194,19 @@ class Techno extends React.Component {
         });
     }
 
+    getMyInfo() {
+        return new Promise((resolve, reject) => {
+            spotifyApi.setAccessToken(this.accessToken);
+            spotifyApi.getMe()
+            .then((userData) => {
+                resolve(userData);
+            },
+            (err) => {
+                this.triggerError();
+            });
+        });
+    }
+
     triggerError() {
         this.setState( {
             isPlaying : false,
@@ -224,7 +238,7 @@ class Techno extends React.Component {
                         document.title = `${playingInfo.body.item.artists[0].name} - ${playingInfo.body.item.name}`;
                     }
                     else {
-                        document.title = 'Is Antonio in the land of Techno?';
+                        document.title = `Is ${this.userName} in the land of Techno?`;
                     }
 
                     this.setState( {
@@ -253,9 +267,11 @@ class Techno extends React.Component {
 
         if (receivedCode) {
             this.getUserToken(receivedCode).then((userToken) => {
-                console.log(userToken);
                 this.accessToken = userToken.access_token;
-                this.fetchInfo();
+                this.getMyInfo().then((myInfo) => {
+                    this.userName = myInfo.body.display_name;
+                    this.fetchInfo();
+                });
             });
         }
         else {
@@ -273,7 +289,7 @@ class Techno extends React.Component {
         return (
             <div>
                 <div className="technoContainer">
-                <AppTitle />
+                <AppTitle userName={ this.userName } />
                 { this.state.loading &&
                     <Loading />
                 }
@@ -291,7 +307,7 @@ class Techno extends React.Component {
                             </div>
                         }
                         { !this.state.isPlaying &&
-                            <NotListening />
+                            <NotListening userName={this.userName} />
                         }
                     </div>
                 }
