@@ -222,6 +222,19 @@ class Techno extends React.Component {
         } );
     }
 
+    parseQueryString() {
+        var str = window.location.search;
+        var objURL = {};
+
+        str.replace(
+            new RegExp( "([^?=&]+)(=([^&]*))?", "g" ),
+            function( $0, $1, $2, $3 ){
+                objURL[ $1 ] = $3;
+            }
+        );
+        return objURL;
+    };
+
     fetchInfo() {
         this.getPlayingInfo().then((playingInfo) => {
             if (playingInfo.body) {
@@ -268,9 +281,8 @@ class Techno extends React.Component {
     }
 
     componentDidMount() {
-
-        var currentUrl = new URL(window.location);
-        var receivedCode = currentUrl.searchParams && currentUrl.searchParams.get("code");
+        var urlParams = this.parseQueryString();
+        var receivedCode = urlParams.code;
 
         if (receivedCode) {
             window.history.replaceState(null, null, window.location.pathname);
