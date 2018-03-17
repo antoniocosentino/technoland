@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import 'font-awesome/css/font-awesome.min.css';
 import './index.css';
 const SpotifyWebApi = require('spotify-web-api-node');
-const request = require('request');
+const Request = require('request');
 
 const spotifyApi = new SpotifyWebApi({
     clientId : process.env.REACT_APP_SPOTIFY_CLIENT_ID,
@@ -13,7 +13,7 @@ const spotifyApi = new SpotifyWebApi({
 class AppTitle extends React.Component {
     render() {
         return (
-          <h1>Is Antonio in the land of Techno?</h1>
+          <h1>Is { this.props.userName } in the land of Techno?</h1>
         );
     }
 }
@@ -75,7 +75,7 @@ class SongInfo extends React.Component {
 class NotListening extends React.Component {
     render() {
         return (
-            <span>Antonio is not listening to music right now. Come back soon! :)</span>
+            <span>{this.props.userName} is not listening to music right now.</span>
         );
     }
 }
@@ -84,6 +84,30 @@ class ViewGitHub extends React.Component {
     render() {
         return (
             <a className="viewGit" href="https://github.com/antoniocosentino/technoland"><i className="fa fa-github"></i> View on Github</a>
+        );
+    }
+}
+
+class AreYou extends React.Component {
+    render() {
+        return (
+            <div className="areYou">
+                { !this.props.message  &&
+                    <span>Are you in the land of techno?</span>
+                }
+                { this.props.message  &&
+                    <span>There was a problem connecting to your Spotify account.<br />Do you want to try again?</span>
+                }
+                <a href={this.props.link} className="spotifyConnect">Connect with Spotify</a>
+            </div>
+        );
+    }
+}
+
+class Separator extends React.Component {
+    render() {
+        return (
+            <div className="separator"></div>
         );
     }
 }
@@ -99,16 +123,48 @@ class Techno extends React.Component {
             title       : null,
             yesNo       : '',
             isPlaying   : false,
-            tags        : []
+            tags        : [],
+            connError   : false
         };
 
         this.accessToken = '';
         this.fetchInfo = this.fetchInfo.bind(this);
+        this.connectLink = '';
+        this.userName = 'Antonio';
+        this.isCustomUser = false;
     };
+
+    generateConnectLink(){
+        var scopes = ['user-read-currently-playing', 'user-read-private'],
+        redirectUri = process.env.REACT_APP_URL,
+        clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID,
+        state = 'get-token';
+
+        var spotifyApiConnect = new SpotifyWebApi({
+        redirectUri : redirectUri,
+        clientId : clientId
+        });
+
+        var authorizeURL = spotifyApiConnect.createAuthorizeURL(scopes, state);
+        return authorizeURL;
+    }
 
     getToken(){
         return new Promise((resolve, reject) => {
-            request(process.env.REACT_APP_API_URL, (error, response, body) => {
+            Request(process.env.REACT_APP_API_URL, (error, response, body) => {
+                if (error) {
+                    this.triggerError();
+                }
+                else {
+                    resolve(JSON.parse(body));
+                }
+            });
+        });
+    }
+
+    getUserToken(code){
+        return new Promise((resolve, reject) => {
+            Request(`${process.env.REACT_APP_PUBLIC_API_URL}?code=${code}`, (error, response, body) => {
                 if (error) {
                     this.triggerError();
                 }
@@ -145,6 +201,19 @@ class Techno extends React.Component {
         });
     }
 
+    getMyInfo() {
+        return new Promise((resolve, reject) => {
+            spotifyApi.setAccessToken(this.accessToken);
+            spotifyApi.getMe()
+            .then((userData) => {
+                resolve(userData);
+            },
+            (err) => {
+                this.triggerError();
+            });
+        });
+    }
+
     triggerError() {
         this.setState( {
             isPlaying : false,
@@ -158,7 +227,7 @@ class Techno extends React.Component {
             if (playingInfo.body) {
                 this.getArtistInfo(playingInfo.body.item.artists[0].name).then((artistData) => {
 
-                    const needle = [ 'techno', 'electro house', 'destroy techno', 'german techno', 'minimal techno'];
+                    const needle = [ 'techno', 'electro house', 'destroy techno', 'german techno', 'tech house', 'minimal techno'];
                     const genreFilter =  needle.some(function (v) {
                         return artistData.body.artists.items[0].genres.indexOf(v) >= 0;
                     });
@@ -176,7 +245,7 @@ class Techno extends React.Component {
                         document.title = `${playingInfo.body.item.artists[0].name} - ${playingInfo.body.item.name}`;
                     }
                     else {
-                        document.title = 'Is Antonio in the land of Techno?';
+                        document.title = `Is ${this.userName} in the land of Techno?`;
                     }
 
                     this.setState( {
@@ -199,21 +268,51 @@ class Techno extends React.Component {
     }
 
     componentDidMount() {
-        this.getToken().then((responseObj) => {
-            this.accessToken = responseObj.access_token;
-            this.fetchInfo();
-        });
+
+        var currentUrl = new URL(window.location);
+        var receivedCode = currentUrl.searchParams.get("code");
+
+        if (receivedCode) {
+            window.history.replaceState(null, null, window.location.pathname);
+            this.getUserToken(receivedCode).then((userToken) => {
+                if (userToken.access_token) {
+                    this.accessToken = userToken.access_token;
+                    this.getMyInfo().then((myInfo) => {
+                        this.userName = myInfo.body.display_name;
+                        this.isCustomUser = true;
+                        this.fetchInfo();
+                    });
+                }
+                else {
+                    this.setState( {
+                        connError : true,
+                        loading   : false
+                    });
+                }
+            });
+        }
+        else {
+            this.getToken().then((responseObj) => {
+                this.accessToken = responseObj.access_token;
+                this.fetchInfo();
+            });
+        }
+
+        this.connectLink = this.generateConnectLink();
+
     }
 
     render() {
         return (
             <div>
                 <div className="technoContainer">
-                <AppTitle />
+                { !this.state.connError &&
+                    <AppTitle userName={ this.userName } />
+                }
                 { this.state.loading &&
                     <Loading />
                 }
-                { !this.state.loading &&
+                { !this.state.loading && !this.state.connError &&
                     <div className="albumWrapper">
                         <YesNo answer={ this.state.yesNo } />
                         { this.state.isPlaying &&
@@ -227,12 +326,21 @@ class Techno extends React.Component {
                             </div>
                         }
                         { !this.state.isPlaying &&
-                            <NotListening />
+                            <NotListening userName={this.userName} />
                         }
                     </div>
                 }
-                </div>
+                { !this.isCustomUser &&
+                    <div>
+                        { !this.state.connError &&
+                            <Separator />
+                        }
+                        <AreYou message={ this.state.connError } link={this.connectLink} />
+                    </div>
+                }
+                <Separator />
                 <ViewGitHub />
+                </div>
             </div>
         );
     }
