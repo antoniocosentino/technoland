@@ -92,7 +92,12 @@ class AreYou extends React.Component {
     render() {
         return (
             <div className="areYou">
-                <span>Are you in the land of techno?</span>
+                { !this.props.message  &&
+                    <span>Are you in the land of techno?</span>
+                }
+                { this.props.message  &&
+                    <span>There was a problem connecting to your Spotify account.<br />Do you want to try again?</span>
+                }
                 <a href={this.props.link} className="spotifyConnect">Connect with Spotify</a>
             </div>
         );
@@ -118,7 +123,8 @@ class Techno extends React.Component {
             title       : null,
             yesNo       : '',
             isPlaying   : false,
-            tags        : []
+            tags        : [],
+            connError   : false
         };
 
         this.accessToken = '';
@@ -267,14 +273,22 @@ class Techno extends React.Component {
         var receivedCode = currentUrl.searchParams.get("code");
 
         if (receivedCode) {
+            window.history.replaceState(null, null, window.location.pathname);
             this.getUserToken(receivedCode).then((userToken) => {
-                this.accessToken = userToken.access_token;
-                window.history.replaceState(null, null, window.location.pathname);
-                this.getMyInfo().then((myInfo) => {
-                    this.userName = myInfo.body.display_name;
-                    this.isCustomUser = true;
-                    this.fetchInfo();
-                });
+                if (userToken.access_token) {
+                    this.accessToken = userToken.access_token;
+                    this.getMyInfo().then((myInfo) => {
+                        this.userName = myInfo.body.display_name;
+                        this.isCustomUser = true;
+                        this.fetchInfo();
+                    });
+                }
+                else {
+                    this.setState( {
+                        connError : true,
+                        loading   : false
+                    });
+                }
             });
         }
         else {
@@ -292,11 +306,13 @@ class Techno extends React.Component {
         return (
             <div>
                 <div className="technoContainer">
-                <AppTitle userName={ this.userName } />
+                { !this.state.connError &&
+                    <AppTitle userName={ this.userName } />
+                }
                 { this.state.loading &&
                     <Loading />
                 }
-                { !this.state.loading &&
+                { !this.state.loading && !this.state.connError &&
                     <div className="albumWrapper">
                         <YesNo answer={ this.state.yesNo } />
                         { this.state.isPlaying &&
@@ -316,8 +332,10 @@ class Techno extends React.Component {
                 }
                 { !this.isCustomUser &&
                     <div>
-                        <Separator />
-                        <AreYou link={this.connectLink} />
+                        { !this.state.connError &&
+                            <Separator />
+                        }
+                        <AreYou message={ this.state.connError } link={this.connectLink} />
                     </div>
                 }
                 <Separator />
