@@ -5,7 +5,7 @@ The app uses Spotify's API to retrieve real-time playing track and music genres.
 
 [Live Demo](https://antoniocosentino.github.io/technoland/)
 
-By default the information showed is related to my personal Spotify account.
+By default the information showed is coming from my personal Spotify account.
 
 The app supports also Spotify Connect, so you can try it yourself with your Spotify account.
 Needless to say, authentication is between you and Spotify, nobody else will be able to see your playback information.
@@ -18,7 +18,7 @@ Account -> Apps -> In the land of Techno -> Revoke access
 #### What's the point? Is this useful?
 Not at all. This is mainly a code playground for me. Plus: I like Spotify.
 
-### "In the land of Techno?" What does that mean?
+#### "In the land of Techno?" What does that mean?
 Once I referred to myself working with super-loud headphones as being "in the land of Techno". By the way, I don't even listen to that much Techno.
 
 #### I'm afraid of clicking "Connect". Will you steal my info / password?
