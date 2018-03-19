@@ -26,4 +26,4 @@ Of course not. The authentication is done with the official Spotify Connect proc
 
 ---
 
-![App Screenshot](https://github.com/antoniocosentino/technoland/blob/master/frontend/src/img/screenshot.png)
+![App Screenshot](https://github.com/antoniocosentino/technoland/blob/master/frontend/public/app-demo.gif)
