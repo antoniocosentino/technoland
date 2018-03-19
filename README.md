@@ -19,11 +19,11 @@ Account -> Apps -> In the land of Techno -> Revoke access
 Not at all. This is mainly a code playground for me. Plus: I like Spotify.
 
 #### "In the land of Techno?" What does that mean?
-Once I referred to myself working with super-loud headphones as being "in the land of Techno". By the way, I don't even listen to that much Techno.
+Once I referred to myself working with super-loud headphones as being "in the land of Techno". That's it, I have a weird sense of humour.
 
 #### I'm afraid of clicking "Connect". Will you steal my info / password?
 Of course not. The authentication is done with the official Spotify Connect procedure. I will only obtain your temporary token (valid for 1 hour) which, by the way, I'm not even storing because I'm too lazy.
 
 ---
 
-![App Screenshot](https://github.com/antoniocosentino/technoland/blob/master/frontend/src/img/screenshot.png)
+![App Screenshot](https://github.com/antoniocosentino/technoland/blob/master/frontend/public/app-demo.gif)
