@@ -282,6 +282,11 @@ class Techno extends React.Component {
 
     componentDidMount() {
         var urlParams = this.parseQueryString();
+        
+        if ( urlParams.rotate ) {
+            document.body.style.transform = `rotate(${urlParams.rotate}deg)`;
+        }
+
         var receivedCode = urlParams.code;
 
         if (receivedCode) {
