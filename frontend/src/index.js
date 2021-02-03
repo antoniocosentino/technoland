@@ -290,6 +290,7 @@ class Techno extends React.Component {
 
         if ( urlParams.rotate ) {
             document.body.style.transform = `rotate(${urlParams.rotate}deg)`;
+            document.body.style.height = `90vh`;
         }
 
         var receivedCode = urlParams.code;
