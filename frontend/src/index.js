@@ -132,6 +132,7 @@ class Techno extends React.Component {
         this.connectLink = '';
         this.userName = 'Antonio';
         this.isCustomUser = false;
+        this.minimalMode = false;
     };
 
     generateConnectLink(){
@@ -237,7 +238,7 @@ class Techno extends React.Component {
 
     fetchInfo() {
         this.getPlayingInfo().then((playingInfo) => {
-            if (playingInfo.body) {
+            if (playingInfo.body && playingInfo.body.is_playing) {
                 this.getArtistInfo(playingInfo.body.item.artists[0].name).then((artistData) => {
 
                     const needle = [ 'techno', 'electro house', 'destroy techno', 'german techno', 'tech house', 'minimal techno'];
@@ -283,6 +284,10 @@ class Techno extends React.Component {
     componentDidMount() {
         var urlParams = this.parseQueryString();
         
+        if ( urlParams.minimal ) {
+            this.minimalMode = true;
+        }
+
         if ( urlParams.rotate ) {
             document.body.style.transform = `rotate(${urlParams.rotate}deg)`;
         }
@@ -320,6 +325,31 @@ class Techno extends React.Component {
     }
 
     render() {
+
+        if ( this.minimalMode ) {
+            if ( this.state.isPlaying ) {
+                return (
+                    <div className="technoContainer">
+                        <div>
+                            <AlbumCover albumImg={ this.state.albumImg } />
+                            <Eq />
+                            <SongInfo artist={ this.state.artist } title={ this.state.title } />
+                            {this.state.tags.map(tag => (
+                                <GenreTag key={ tag } tag={ tag } />
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
+
+            return (
+                <div className="technoContainer">
+                    <Loading />
+                </div>
+            )
+        }
+
+
         return (
             <div>
                 <div className="technoContainer">
