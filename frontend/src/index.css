@@ -42,6 +42,10 @@ body {
   margin-bottom: 10px;
 }
 
+.technoContainer .songInfo.bigText {
+  font-size: 30px;
+}
+
 .technoContainer span.songArtist {
   font-weight: bold;
 }

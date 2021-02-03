@@ -61,7 +61,21 @@ class GenreTag extends React.Component {
 }
 
 class SongInfo extends React.Component {
+    
     render() {
+
+        const { bigMode } = this.props;
+
+        if ( bigMode ) {
+            return (
+                <div className="songInfo bigText">
+                    <span className="songArtist">{ this.props.artist }</span>
+                     <br />
+                    <span className="songTitle">{ this.props.title }</span>
+                </div>
+            );    
+        }
+
         return (
             <div className="songInfo">
                 <span className="songArtist">{ this.props.artist }</span>
@@ -333,11 +347,8 @@ class Techno extends React.Component {
                     <div className="technoContainer">
                         <div>
                             <AlbumCover albumImg={ this.state.albumImg } />
-                            <Eq />
-                            <SongInfo artist={ this.state.artist } title={ this.state.title } />
-                            {this.state.tags.map(tag => (
-                                <GenreTag key={ tag } tag={ tag } />
-                            ))}
+                            <br /><br />
+                            <SongInfo bigMode={ true } artist={ this.state.artist } title={ this.state.title } />
                         </div>
                     </div>
                 )
