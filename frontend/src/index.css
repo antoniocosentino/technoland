@@ -71,7 +71,7 @@ body {
   font-size: 16px;
 }
 
-.technoContainer a.spotifyConnect {
+.technoContainer .spotifyConnect {
   display: block;
   text-transform: uppercase;
   background: #2ebd59;
@@ -86,7 +86,7 @@ body {
   transition: background-color .15s ease,border-color .15s ease,color .15s ease;
 }
 
-.technoContainer a.spotifyConnect:hover {
+.technoContainer .spotifyConnect:hover {
   background: #1ed760;
 }
 
@@ -110,3 +110,7 @@ a.viewGit i {
     width: 100%;
   }
 }
+
+button.spotifyConnect { border: 0; font-family: inherit; width: 220px; }
+
+.technoContainer span.yesNo.unknown { font-size: 36px; }
