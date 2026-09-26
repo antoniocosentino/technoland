@@ -12,7 +12,7 @@ The companion reads the owner's playback from the existing public endpoint and a
 4. In the Spotify developer dashboard, add exactly `https://www.kultmedia.com/lab/technolandapi/` as an additional redirect URI. Keep the old redirect URI registered. If you choose a different endpoint URL, update `redirect_uri` and the frontend setting together.
 5. Configure `frontend_urls` with the exact frontend return URLs, including trailing slashes. Defaults cover GitHub Pages, localhost:3000 and 127.0.0.1:3000. Remove development URLs if not needed.
 6. Ensure the host passes the `Authorization` header to PHP. The script accepts `HTTP_AUTHORIZATION` or `REDIRECT_HTTP_AUTHORIZATION`. For Apache/FastCGI, your host may require `SetEnvIf Authorization "(.+)" HTTP_AUTHORIZATION=$1` in this new directory's `.htaccess`.
-7. The script supplies origin-specific CORS headers. If the host adds wildcard CORS globally, disable that rule for **this new directory only** to avoid duplicate `Access-Control-Allow-Origin` headers. Do not change the old endpoint's rules.
+7. This host already supplies `Access-Control-Allow-Origin: *`; the script deliberately does not emit another origin header. Keep that host rule. The PHP allowlist still rejects unapproved origins, and API fetches omit cookies (visitor requests use an explicit Authorization header). The script supplies allowed methods and headers for preflight requests. If deploying to another host without CORS headers, configure exactly one origin header there or emit it from PHP. Do not add `Access-Control-Allow-Credentials: true` or change the frontend to send cookies.
 8. In `frontend/.env`, set:
 
    ```dotenv

@@ -113,7 +113,9 @@ try {
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
     if ($origin !== '' && !in_array($origin, $origins, true)) reply(['error' => 'Origin not allowed'], 403);
     if ($origin !== '') {
-        header('Access-Control-Allow-Origin: ' . $origin);
+        // This host already adds Access-Control-Allow-Origin: *.
+        // Do not emit a second value: browsers reject duplicate CORS origins.
+        // API fetches omit cookies and use an explicit app-session bearer token.
         header('Vary: Origin');
     }
     header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
