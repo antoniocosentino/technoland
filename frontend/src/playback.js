@@ -36,10 +36,11 @@ export async function fetchPlayback(url, signal, session) {
 
     const images = song.album && song.album.images;
     const genres = Array.isArray(data.genres) ? data.genres.filter(genre => typeof genre === 'string') : null;
-    const techno = ['techno', 'electro house', 'destroy techno', 'german techno', 'tech house', 'minimal techno'];
+    const genreWhitelist = ['electro house', 'tech house'];
+    const isTechno = genre => /\btechno\b/i.test(genre) || genreWhitelist.indexOf(genre.toLowerCase()) >= 0;
     return {
         genres,
-        answer: !genres || !genres.length ? 'UNKNOWN' : genres.some(genre => techno.indexOf(genre.toLowerCase()) >= 0) ? 'YES' : 'NO',
+        answer: !genres || !genres.length ? 'UNKNOWN' : genres.some(isTechno) ? 'YES' : 'NO',
         title: song.name,
         artist: song.artists.map(artist => artist.name).filter(Boolean).join(', '),
         albumImg: Array.isArray(images) && images.length ? images[0].url : null

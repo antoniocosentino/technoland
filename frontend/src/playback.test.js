@@ -66,7 +66,20 @@ test('propagates invalid JSON and network failures for the UI to handle', async 
 });
 
  test('classifies known genres and does not mistake missing genres for NO', async () => {
-    for (const [genres, answer] of [[['minimal techno'], 'YES'], [['punk'], 'NO'], [[], 'UNKNOWN'], [null, 'UNKNOWN']]) {
+    for (const [genres, answer] of [
+        [['minimal techno'], 'YES'],
+        [['hardcore techno'], 'YES'],
+        [['dub TECHNO'], 'YES'],
+        [['techno'], 'YES'],
+        [['punk', 'industrial techno'], 'YES'],
+        [['Electro House'], 'YES'],
+        [['tech house'], 'YES'],
+        [['technopop'], 'NO'],
+        [['progressive tech house'], 'NO'],
+        [['punk'], 'NO'],
+        [[], 'UNKNOWN'],
+        [null, 'UNKNOWN']
+    ]) {
         respond({ ...playing, genres });
         expect((await fetchPlayback(url)).answer).toBe(answer);
     }
